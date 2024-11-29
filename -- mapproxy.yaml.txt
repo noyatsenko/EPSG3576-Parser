@@ -1,0 +1,56 @@
+# apt update; apt install nano ; nano /mapproxy/mapproxy.yaml
+# nano /mapproxy/mapproxy.yaml
+# mapproxy-util grids --grid u --mapproxy-conf /mapproxy/mapproxy.yaml
+
+# mapproxy-util serve-develop mapproxy.yaml
+# mapproxy-util grids --grid u --mapproxy-conf mapproxy.yaml
+
+services:
+  demo:
+  wms:
+  wmts:
+  tms:
+    use_grid_names: true
+    # origin for /tiles service
+    origin: 'nw'
+
+
+layers:
+  - name: osm
+    title: Omniscale OSM WMS - osm.omniscale.net
+    sources: [osm_cache_in]
+
+  - name: osmu
+    title: OSM in UTM
+    sources: [osm_cache_u]
+
+caches:
+  osm_cache_in:
+    grids: [webmercator]
+    sources: [osm_wms]
+
+  osm_cache_u:
+    grids: [u]
+    meta_size: [4, 4]
+    sources: [osm_cache_in]
+
+sources:
+  osm_wms:
+    type: wms
+    req:
+      url: https://maps.omniscale.net/v2/demo/style.default/service?
+      layers: osm
+
+grids:
+    webmercator:
+        base: GLOBAL_WEBMERCATOR
+    u:
+      srs: 'EPSG:3576'
+      bbox: [-180, 0, 180, 90]
+      bbox_srs: 'EPSG:4326'
+      origin: 'nw'
+      num_levels: 14
+      min_res: 70390.34969711941
+
+
+globals:

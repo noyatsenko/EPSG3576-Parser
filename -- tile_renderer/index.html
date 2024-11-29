@@ -1,0 +1,172 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> 
+    <title>MapProxy Demo</title>
+    <link rel="stylesheet" type="text/css" href="./site.css">
+    <style type="text/css">
+        .mover {
+            position: absolute;
+            top: .1em;
+            z-index: 1000;
+        }
+        .mouse-position{
+            position: fixed;
+            left:.5em;
+            bottom: 0;
+
+        }
+    </style>
+</head>
+
+<body onload="init()">
+
+<!-- parsing: custom moving controls -->
+<div class="mover">
+    <button id="moveleft">Move left</button>
+    <button id="moveright">Move right</button>
+    <button id="moveup">Move up</button>
+    <button id="movedown">Move down</button>
+    <button id="resetcenter">Reset center</button>
+    <button id="resetzoom">Reset zoom</button>
+    <span>RP<input type="checkbox" id="render-edges" /></span>
+    <button id="loadstatus">Loading...</button>
+    <div id="mouse-position"></div>
+</div>
+<!-- /parsing: custom moving controls -->
+
+
+    <div id="map"></div>
+
+    <script src="./ol.js"></script>
+    <script src="./proj4.min.js"></script>
+    <link rel="stylesheet" href="./ol.css">
+
+    <script type="text/javascript">
+        async function init() {
+
+// parsing: map moving functions
+    const halfStep = 256;
+
+    document.getElementById('moveright').onclick = function() {
+    var center = map.getView().getCenter();
+    var resolution = map.getView().getResolution();
+    map.getView().setCenter([center[0] + halfStep*resolution, center[1]]);}
+
+    document.getElementById('moveleft').onclick = function() {
+    var center = map.getView().getCenter();
+    var resolution = map.getView().getResolution();
+    map.getView().setCenter([center[0] - halfStep*resolution, center[1]]);}
+
+    document.getElementById('moveup').onclick = function() {
+    var center = map.getView().getCenter();
+    var resolution = map.getView().getResolution();
+    map.getView().setCenter([center[0], center[1] + halfStep*resolution]);}
+
+    document.getElementById('movedown').onclick = function() {
+    var center = map.getView().getCenter();
+    var resolution = map.getView().getResolution();
+    map.getView().setCenter([center[0], center[1] - halfStep*resolution]);}
+
+    document.getElementById('resetcenter').onclick = function() {
+    map.getView().setCenter([0, 0]);}
+
+    document.getElementById('resetzoom').onclick = function() {
+    map.getView().fit(extent);}
+// ============================
+
+// debugging: count moveleft clicks for manual frame-testing
+const btn_moveleft = document.getElementById('moveleft');
+var clicks = 0;
+btn_moveleft.addEventListener('click', (event) => {
+    clicks+=1;
+    btn_moveleft.textContent = new String(" Clicks: " + clicks).padEnd(14,'\xa0');});
+
+// debugging: detect mouse coordinates
+    const mousePositionControl = new ol.control.MousePosition({
+    coordinateFormat: ol.coordinate.createStringXY(4),
+    projection: 'EPSG:3576',
+    className: 'mouse-position',
+    target: document.getElementById('mouse-position'),});
+
+// debugging: show reprojection grid
+const renderEdgesCheckbox = document.getElementById('render-edges');
+renderEdgesCheckbox.onchange = function () {
+    layers.forEach((layer) => { layer.getSource().setRenderReprojectionEdges(Number(renderEdgesCheckbox.checked)); });
+    map.setView(map.getView());
+};
+
+
+            //const ex = 12730027.202878494; // native EPSG3576-laea, do uncomment universal projections below
+            const ex = 20037509.762; // from leaflet EPSG3576-stere
+
+            // special config for canadian's Arctic EPSG3576
+            proj4.defs('EPSG:3576', '+proj=stere +lat_0=90 +lon_0=90 +x_0=0 +y_0=0 +datum=WGS84 +units=m +no_defs');
+            ol.proj.proj4.register(proj4);
+            // =============================================
+
+            const extent = [-ex, -ex, ex, ex];
+            const transparent = "true";
+            const srs = "EPSG:3576";
+            // //universal projections, include everyone and standard EPSG3576-laea
+            // if (!ol.proj.get(srs)) {
+            //     const allDefs = await import('./proj4defs.js');
+            //     const srsNum = srs.indexOf(':') > -1 ? parseInt(srs.split(':')[1]) : parseInt(srs);
+            //     if (!allDefs.defs[srsNum]) {
+            //         alert("The preview map does not support this coordinate system");
+            //         return;
+            //     }
+            //     proj4.defs(srs, allDefs.defs[srsNum]);
+            //     ol.proj.proj4.register(proj4);
+            // }
+
+
+            const source = new ol.source.ImageWMS({
+            });
+
+            const background_source = new ol.source.XYZ({
+                url: "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                projection: 'EPSG:3857'
+            });
+
+
+            const osm_source = new ol.source.OSM();
+
+
+            const layers = [
+                //new ol.layer.Image({source}),
+                new ol.layer.Tile({source: background_source}),
+                //new ol.layer.Tile({source: osm_source}),
+            ];
+
+
+            const map = new ol.Map({
+                controls: ol.control.defaults.defaults().extend([mousePositionControl]), // debugging: add mouse coordinates
+                layers: layers,
+                target: 'map',
+                view: new ol.View({
+                    projection: "EPSG:3576"
+                })
+            });
+            map.getView().fit(extent);
+
+            const dimensions = {};
+            if (Object.keys(dimensions).length > 0) {
+                source.updateParams(dimensions);
+            }
+
+            setDimension = (dimension, value) => {
+                const update = {};
+                const key = dimension.toUpperCase();
+                update[key] = value;
+                source.updateParams(update);
+            }
+
+// parsing: check tiles are loaded
+    map.on('loadstart', function () { document.getElementById("loadstatus").style.visibility = 'visible'; })
+    map.on('loadend', function () { document.getElementById("loadstatus").style.visibility = 'hidden'; })
+        }
+
+    </script>
+</body>
+</html>

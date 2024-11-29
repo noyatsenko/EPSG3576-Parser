@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<!-- saved from url=(0061)https://leafletjs.com/examples/quick-start/example-basic.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<!--<base target="_top">--><base href="." target="_top">
+	
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	<title>Quick Start - Leaflet</title>
+	
+	<link rel="shortcut icon" type="image/x-icon" href="https://leafletjs.com/examples/quick-start/docs/images/favicon.ico">
+
+    <link rel="stylesheet" href="./leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+    <script src="./leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+	<style>
+		html, body {
+			height: 100%;
+			margin: 0;
+		}
+		.leaflet-container {
+			height: 400px;
+			width: 600px;
+			max-width: 100%;
+			max-height: 100%;
+		}
+	</style>
+	
+</head>
+
+<body>
+
+<div id="map" style="width: 100vw; height: 100vh;"></div>
+
+<script>
+
+	// const map = L.map('map').setView([0, 0], 1);
+	var map = L.map('map', {
+    //crs: L.CRS.EPSG4326
+}).setView([0, 0], 0);
+
+	//L.tileLayer('http://localhost:8080/wmts/osmu/u/{z}/{x}/{y}.png').addTo(map);
+
+	L.tileLayer('./tiles/{z}/{x}/{y}.png').addTo(map);
+
+	//L.tileLayer('http://localhost:8600/geoserver/gwc/service/tms/1.0.0/ne:countries1/{z}/{x}/{-y}.png').addTo(map);
+
+// 	L.tileLayer.wms("http://localhost:8600/geoserver/ows?service=WMS", {
+//     layers: 'ne:countries',
+//     format: 'image/png',
+//     transparent: true
+// }).addTo(map);
+
+// 	var nexrad = L.tileLayer.wms("http://mesonet.agron.iastate.edu/cgi-bin/wms/nexrad/n0r.cgi", {
+//     layers: 'nexrad-n0r-900913',
+//     format: 'image/png',
+//     transparent: true,
+//     attribution: "Weather data © 2012 IEM Nexrad"
+// });
+
+	// const tiles = L.tileLayer('http://192.168.224.108:8080/geoserver/gwc/service/tms/1.0.0/ne:world/{z}/{x}/{y}.png', {
+	// 	tms: true,
+	// 	maxZoom: 14,
+	// 	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+	// }).addTo(map);
+
+
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,116 @@
+########################
+# convert osm to mbtiles
+########################
+
+sudo apt update
+sudo apt install unzip mc htop
+sudo apt install build-essential libboost-dev libboost-filesystem-dev libboost-iostreams-dev libboost-program-options-dev libboost-system-dev liblua5.1-0-dev libshp-dev libsqlite3-dev rapidjson-dev zlib1g-dev
+
+git clone https://github.com/systemed/tilemaker.git
+cd tilemaker
+make
+sudo make install
+
+mkdir ~/tmp
+
+mkdir ~/tilemaker/coastline && cd ~/tilemaker/coastline
+wget https://osmdata.openstreetmap.de/download/water-polygons-split-4326.zip
+unzip *.zip
+cp ./water-polygons-split-4326/* ./
+
+mkdir ~/tilemaker/landcover && cd ~/tilemaker/landcover
+
+wget https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/10m/physical/ne_10m_antarctic_ice_shelves_polys.zip
+wget https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/10m/physical/ne_10m_glaciated_areas.zip
+wget https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/10m/cultural/ne_10m_urban_areas.zip
+
+unzip ne_10m_antarctic_ice_shelves_polys.zip
+unzip ne_10m_glaciated_areas.zip
+unzip ne_10m_urban_areas.zip
+
+mkdir ne_10m_antarctic_ice_shelves_polys
+mkdir ne_10m_glaciated_areas
+mkdir ne_10m_urban_areas
+
+cp ne_10m_antarctic_ice_shelves_polys* ./ne_10m_antarctic_ice_shelves_polys
+cp ne_10m_glaciated_areas* ./ne_10m_glaciated_areas
+cp ne_10m_urban_areas* ./ne_10m_urban_areas
+
+
+
+cd ~/tilemaker
+wget https://planet.openstreetmap.org/pbf/planet-latest.osm.pbf
+
+
+cd ~/tilemaker
+mkdir ./tmp
+tilemaker ./planet-latest.osm.pbf ./planet-latest.mbtiles --store ./tmp/
+
+=====
+
+Layer place (z0-14)
+Layer boundary (z0-14)
+Layer poi (z12-14)
+Layer poi_detail (z14-14) -> poi
+Layer housenumber (z14-14)
+Layer waterway (z8-14)
+Layer waterway_detail (z12-14) -> waterway
+Layer transportation (z4-14)
+Layer transportation_name (z8-14)
+Layer transportation_name_mid (z12-14) -> transportation_name
+Layer transportation_name_detail (z14-14) -> transportation_name
+Layer building (z13-14)
+Layer water (z6-14)
+Layer ocean (z0-14) -> water
+Layer water_name (z14-14)
+Layer water_name_detail (z14-14) -> water_name
+Layer aeroway (z11-14)
+Layer aerodrome_label (z10-14)
+Layer park (z11-14)
+Layer landuse (z4-14)
+Layer urban_areas (z4-8) -> landuse
+Layer landcover (z0-14)
+Layer ice_shelf (z0-9) -> landcover
+Layer glacier (z2-9) -> landcover
+Layer mountain_peak (z11-14)
+Bounding box -180, -85.06, 180, 85.06
+Using osm store file: ./tmp/
+Filename: ./tmp//mmap_0.dat, size: 1024000000
+Reading shapefile ocean
+Reading shapefile urban_areas
+Reading shapefile ice_shelf
+Reading shapefile glacier
+Generated points: 0, lines: 0, polygons: 65830
+Reading .pbf ./planet-latest.osm.pbf
+warning: PBF has very large blocks, which may slow processing
+         to fix: osmium cat -f pbf your-file.osm.pbf -o optimized.osm.pbf
+
+=====
+
+###########################
+# serve tileserver-gl-light
+###########################
+
+# styles and layers
+# rewrite config and boundingbox -180, -85.06, 180, 85.06
+sudo apt install mc unzip wget
+wget https://github.com/maptiler/tileserver-gl/releases/download/v1.3.0/test_data.zip && unzip test_data.zip
+
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - &&\
+sudo apt-get install -y nodejs
+
+sudo npm install -g tileserver-gl-light
+tileserver-gl-light --file planet-latest.mbtiles
+# or just tileserver-gl-light if config ok
+
+=====
+
+#####################
+# serve tileserver-gl
+# styles still needed
+#####################
+
+sudo apt install build-essential pkg-config xvfb libglfw3-dev libuv1-dev libjpeg-turbo8 libicu70 libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev gir1.2-rsvg-2.0 librsvg2-2 librsvg2-common libcurl4-openssl-dev libpixman-1-dev libpixman-1-0
+sudo npm install -g tileserver-gl
+
+tileserver-gl --file planet-latest.mbtiles

@@ -1,0 +1,31 @@
+-- fix Firefox
+
+As Firefox min-width is set to 450px (from 74 browser version), you have to fix browser config to allow viewport size to 256px.
+
+
+1. In file browser/omni.ja find block
+
+:root:not([chromehidden~="toolbar"]) {
+  min-width: 450px;
+  min-height: 120px;
+}
+
+replace min-width property to 120px.
+
+
+2. You should get
+
+:root:not([chromehidden~="toolbar"]) {
+  min-width: 120px;
+  min-height: 120px;
+}
+
+
+Notes:
+
+Don't forget to install system browser driver from https://github.com/mozilla/geckodriver/releases (in /usr/bin for example).
+
+In Debian you may execute:
+sed -i 's/min-width: 450px;/min-width: 120px;/g' /usr/lib/firefox-esr/browser/omni.ja
+
+In Ubuntu you may install firefox not-from-snap, or make your own browser profile, or rewrite this code to use other browser.
