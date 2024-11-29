@@ -11,14 +11,14 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Точно нужен для MacOS, потому что мак с retina рендерит x2
  */
 public class BuildOutTiles {
-    static String tiles = ParseRussiaSeq.tiles; // "tiles/"
+    static String tiles = ParserRussiaSeq.tiles; // "tiles/"
     static String tiles_out = "tiles_out/";
     static String tile_ext = "png";
     // TODO: целевое разрешение тайла для сайта (обычно 256)
     static int tileRes = 256;
 
     public static void main(String[] args) throws IOException {
-        Collection<File> pngs = FileUtils.listFiles(new File(ParseRussiaSeq.tiles), new String[]{tile_ext}, true);
+        Collection<File> pngs = FileUtils.listFiles(new File(ParserRussiaSeq.tiles), new String[]{tile_ext}, true);
 
         // многопоточный конвертер через Thumbnailator
         AtomicBoolean res = new AtomicBoolean(true);

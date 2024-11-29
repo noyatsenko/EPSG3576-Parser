@@ -15,7 +15,7 @@ import java.util.concurrent.*;
  * Чтобы визуально проверить проблемы рендера, и возможно пропущенные из-за сбоев сети тайлы
  */
 public class BuildLayerPreview {
-    static String tiles = ParseRussiaSeq.tiles; // "tiles/"
+    static String tiles = ParserRussiaSeq.tiles; // "tiles/"
     static String tiles_out = BuildOutTiles.tiles_out; // "tiles_out/"
 
     // TODO: целевое разрешение тайла на превью
