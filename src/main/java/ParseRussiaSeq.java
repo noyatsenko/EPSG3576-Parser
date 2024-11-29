@@ -46,6 +46,8 @@ public class ParseRussiaSeq {
     // минимальный столбец при старте алгоритма, использовать при аварийном перезапуске
     static int minColStart = 1022;
 
+    // вся планета
+    // static double [] bboxLeftTopRightBottom = {0.0, 0.0, 1.0, 1.0};
     // границы России в % от карты
     static double [] bboxLeftTopRightBottom = {0.34, 0.45, 0.65, 0.65};
 

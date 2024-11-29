@@ -38,6 +38,8 @@ public class BuildLayerPreview {
             int colSize = layer.listFiles(File::isDirectory).length;
             int rowSize = layer.listFiles(File::isDirectory)[0].listFiles(File::isFile).length;
 
+            System.err.println("Ожидаемое количество тайлов: " + colSize*rowSize);
+
             // холст итогового изображения на котором тайлы отрисуются (превью)
             // может понадобиться уменьшить targetRes если холст не поместится в 2^32 бита по одной из сторон
             BufferedImage canvas = new BufferedImage(colSize* targetRes, rowSize* targetRes, BufferedImage.TYPE_INT_ARGB);
