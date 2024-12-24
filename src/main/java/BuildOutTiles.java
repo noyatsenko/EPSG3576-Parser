@@ -27,7 +27,10 @@ public class BuildOutTiles {
                 File out = new File(png.getAbsolutePath().replace(tiles, tiles_out));
                 FileUtils.touch(out);
                 Thumbnailator.createThumbnail(png, out, tileRes, tileRes);
-            } catch (Exception ex) { res.set(false); }
+            } catch (Exception ex) {
+                System.err.println(ex.getMessage());
+                res.set(false);
+            }
         });
         System.err.println("Результат сжатия: " + res);
     }

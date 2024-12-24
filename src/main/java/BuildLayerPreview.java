@@ -19,7 +19,7 @@ public class BuildLayerPreview {
     static String tiles_out = BuildOutTiles.tiles_out; // "tiles_out/"
 
     // TODO: целевое разрешение тайла на превью
-    static int targetRes = 32;
+    static int targetRes = 24;
 
     public static void main(String[] args) throws IOException {
         process(tiles);
